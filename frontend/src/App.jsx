@@ -1,20 +1,41 @@
+import './App.css'
+import Sidebar from './components/Sidebar'
+import StatCard from './components/StatCard'
+
 function App() {
   return (
-    <div>
-      <h1>🎓 StudentOS</h1>
+    <div className="app">
+      <Sidebar />
 
-      <p>
-        Your AI-powered academic productivity assistant.
-      </p>
+      <main className="main-content">
+        <h1>Good morning 👋</h1>
+        <p>Here’s what’s happening with your studies today.</p>
+        <div className="stats-grid">
+  <StatCard
+    icon="✅"
+    value="3"
+    title="Tasks Due"
+  />
 
-      <h2>Welcome to StudentOS</h2>
+  <StatCard
+    icon="📚"
+    value="2"
+    title="Classes Today"
+  />
 
-      <p>
-        Manage your assignments, attendance, study plans and academic progress
-        in one place.
-      </p>
+  <StatCard
+    icon="🎯"
+    value="78%"
+    title="Attendance"
+  />
+</div>
 
-      <button>Ask StudentOS AI ✨</button>
+        <h2>Today’s Plan</h2>
+
+        <p>📚 Data Structures — 9:00 AM</p>
+        <p>💻 DBMS Assignment — Due tomorrow</p>
+        <p>📝 Revise Operating Systems — 4:00 PM</p>
+      </main>
     </div>
   )
 }
