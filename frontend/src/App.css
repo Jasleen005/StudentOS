@@ -38,6 +38,8 @@
   text-align: left;
   font-size: 15px;
   cursor: pointer;
+  text-decoration: none;
+color: #222;
 }
 
 .menu-item:hover {
