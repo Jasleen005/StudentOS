@@ -1,0 +1,22 @@
+# Environment variables / secret API keys
+.env
+
+# Node / React
+node_modules/
+dist/
+
+# Python
+__pycache__/
+*.pyc
+venv/
+.venv/
+
+# Database
+*.db
+
+# VS Code
+.vscode/
+
+# Operating system files
+.DS_Store
+Thumbs.db
