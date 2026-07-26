@@ -126,3 +126,127 @@
   color: #777;
   font-size: 14px;
 }
+
+/* Dashboard header */
+
+.dashboard-header {
+  margin-bottom: 32px;
+}
+
+.dashboard-header h1 {
+  margin-bottom: 6px;
+}
+
+.dashboard-header p {
+  margin: 0;
+  color: #777;
+}
+
+
+/* Main dashboard sections */
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 22px;
+  max-width: 850px;
+  margin-bottom: 24px;
+}
+
+.dashboard-section {
+  background: white;
+  border: 1px solid #e9e9f0;
+  border-radius: 14px;
+  padding: 24px;
+}
+
+.dashboard-section h2 {
+  margin-top: 0;
+  margin-bottom: 22px;
+}
+
+
+/* Today's Plan */
+
+.plan-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f3;
+}
+
+.plan-item:last-child {
+  border-bottom: none;
+}
+
+.plan-time {
+  min-width: 70px;
+  font-size: 14px;
+  color: #6c5ce7;
+  font-weight: 600;
+}
+
+.plan-item strong {
+  font-size: 15px;
+}
+
+.plan-item p {
+  margin: 4px 0 0;
+  color: #888;
+  font-size: 13px;
+}
+
+
+/* Needs Attention */
+
+.attention-item {
+  display: flex;
+  gap: 12px;
+  padding: 14px 0;
+  border-bottom: 1px solid #f0f0f3;
+}
+
+.attention-item:last-child {
+  border-bottom: none;
+}
+
+.attention-item strong {
+  font-size: 15px;
+}
+
+.attention-item p {
+  margin: 4px 0 0;
+  color: #888;
+  font-size: 13px;
+}
+
+
+/* AI Insight */
+
+.ai-insight {
+  max-width: 800px;
+  background: #f0edff;
+  border-radius: 14px;
+  padding: 22px 24px;
+}
+
+.ai-insight-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.ai-insight p {
+  margin: 0 0 14px;
+  color: #625f70;
+  line-height: 1.6;
+}
+
+.ai-insight button {
+  border: none;
+  background: transparent;
+  color: #6c5ce7;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+}
