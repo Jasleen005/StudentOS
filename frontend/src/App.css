@@ -252,3 +252,131 @@ color: #222;
   padding: 0;
   cursor: pointer;
 }
+
+/* Tasks Page */
+
+.tasks-header {
+  max-width: 850px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.tasks-header h1 {
+  margin: 0 0 6px;
+  font-size: 30px;
+}
+
+.tasks-header p {
+  margin: 0;
+  color: #777;
+}
+
+.add-task-button {
+  border: none;
+  background: #6c5ce7;
+  color: white;
+  padding: 11px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.add-task-button:hover {
+  opacity: 0.9;
+}
+
+.task-list {
+  max-width: 850px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.task-card {
+  background: white;
+  border: 1px solid #e9e9f0;
+  border-radius: 14px;
+  padding: 20px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-card h3 {
+  margin: 0 0 7px;
+  font-size: 17px;
+}
+
+.task-card p {
+  margin: 0;
+  color: #888;
+  font-size: 14px;
+}
+
+/* Priority Labels */
+
+.priority {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.priority.high {
+  background: #ffe9e9;
+  color: #d64545;
+}
+
+.priority.medium {
+  background: #fff3dc;
+  color: #c47a16;
+}
+
+.priority.low {
+  background: #e8f7ee;
+  color: #3b8d5a;
+}
+/* Completed Tasks */
+
+.task-card.completed {
+  opacity: 0.6;
+  background: #f7f7f9;
+}
+
+.task-card.completed .task-info h3 {
+  text-decoration: line-through;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.complete-button {
+  border: 1px solid #dedee8;
+  background: white;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.complete-button:hover {
+  background: #f5f4ff;
+}
+.delete-button {
+  border: none;
+  background: #fff0f0;
+  color: #d64545;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.delete-button:hover {
+  background: #ffe2e2;
+}
