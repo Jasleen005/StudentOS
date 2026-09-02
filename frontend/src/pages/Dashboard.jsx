@@ -1,6 +1,21 @@
+import { useEffect, useState } from 'react'
 import StatCard from '../components/StatCard'
 
 function Dashboard() {
+  const [stats, setStats] = useState({
+  total_tasks: 0,
+  completed_tasks: 0,
+  pending_tasks: 0,
+  high_priority: 0,
+  completion_rate: 0
+})
+
+useEffect(() => {
+  fetch("http://127.0.0.1:8001/dashboard")
+    .then((res) => res.json())
+    .then((data) => setStats(data))
+    .catch((err) => console.error(err))
+}, [])
   return (
     <main className="main-content">
 
@@ -12,9 +27,35 @@ function Dashboard() {
 
       {/* Summary Cards */}
       <div className="stats-grid">
-        <StatCard icon="✅" value="3" title="Tasks Due" />
-        <StatCard icon="📚" value="2" title="Classes Today" />
-        <StatCard icon="🎯" value="78%" title="Attendance" />
+        <StatCard
+  icon="📋"
+  value={stats.total_tasks}
+  title="Total Tasks"
+/>
+
+<StatCard
+  icon="✅"
+  value={stats.completed_tasks}
+  title="Completed"
+/>
+
+<StatCard
+  icon="⏳"
+  value={stats.pending_tasks}
+  title="Pending"
+/>
+
+<StatCard
+  icon="🔥"
+  value={stats.high_priority}
+  title="High Priority"
+/>
+
+<StatCard
+  icon="📈"
+  value={`${stats.completion_rate}%`}
+  title="Completion Rate"
+/>
       </div>
 
       {/* Main Dashboard Area */}

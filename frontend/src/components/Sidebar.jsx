@@ -20,8 +20,8 @@ function Sidebar() {
           📅 Study Planner
         </NavLink>
 
-        <NavLink to="/attendance" className="menu-item">
-          🎯 Attendance
+        <NavLink to="/growth" className="menu-item">
+          🎯 Growth
         </NavLink>
 
         <NavLink to="/subjects" className="menu-item">
