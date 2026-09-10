@@ -74,25 +74,29 @@ function SubjectWorkspace() {
 
 </div>
 
-        <div className="workspace-card">
+       <div
+  className="workspace-card"
+  onClick={() => navigate(`/resources/${id}`)}
+  style={{ cursor: "pointer" }}
+>
+  <h2>📂 Resources</h2>
 
-          <h2>📂 Resources</h2>
+  <p>Books, PDFs & links.</p>
 
-          <p>Books, PDFs & links.</p>
+  <span>Open Resources →</span>
+</div>
 
-          <span>15 Files</span>
+        <div
+  className="workspace-card"
+  onClick={() => navigate(`/assignments/${id}`)}
+  style={{ cursor: "pointer" }}
+>
+  <h2>📄 Assignments</h2>
 
-        </div>
+  <p>Track submissions.</p>
 
-        <div className="workspace-card">
-
-          <h2>📄 Assignments</h2>
-
-          <p>Track submissions.</p>
-
-          <span>3 Pending</span>
-
-        </div>
+  <span>Open Assignments →</span>
+</div>
 
         <div className="workspace-card">
 

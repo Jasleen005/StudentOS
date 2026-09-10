@@ -1,5 +1,8 @@
 import './App.css'
 import Notes from "./pages/Notes";
+import Resources from "./pages/Resources";
+import Assignments from "./pages/Assignments";
+
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 import Sidebar from './components/Sidebar'
@@ -44,9 +47,9 @@ function App() {
           />
 
           <Route
-  path="/growth"
-  element={<Growth />}
-/>
+            path="/growth"
+            element={<Growth />}
+          />
 
           <Route
             path="/subjects"
@@ -54,14 +57,24 @@ function App() {
           />
 
           <Route
-  path="/subjects/:id"
-  element={<SubjectWorkspace />}
-/>
+            path="/subjects/:id"
+            element={<SubjectWorkspace />}
+          />
 
-<Route
-  path="/notes/:id"
-  element={<Notes />}
- />
+          <Route
+            path="/notes/:id"
+            element={<Notes />}
+          />
+
+          <Route
+            path="/resources/:id"
+            element={<Resources />}
+          />
+
+          <Route
+            path="/assignments/:id"
+            element={<Assignments />}
+          />
 
           <Route
             path="/analytics"
