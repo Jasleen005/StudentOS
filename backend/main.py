@@ -55,6 +55,13 @@ class Resource(BaseModel):
     link: str = ""
     created_at: str
 
+class Assignment(BaseModel):
+    subject_id: int
+    title: str
+    deadline: str
+    status: str
+    created_at: str
+
 @app.get("/")
 def home():
     return {"message": "StudentOS API is running"}
@@ -720,4 +727,154 @@ def delete_resource(resource_id: int):
 
     return {
         "message": "Resource deleted successfully"
+    }
+
+# -------------------------
+# GET ASSIGNMENTS FOR SUBJECT
+# -------------------------
+@app.get("/assignments/{subject_id}")
+def get_assignments(subject_id: int):
+
+    connection = get_db_connection()
+
+    assignments = connection.execute(
+        """
+        SELECT *
+        FROM assignments
+        WHERE subject_id = ?
+        ORDER BY id DESC
+        """,
+        (subject_id,)
+    ).fetchall()
+
+    connection.close()
+
+    return [dict(assignment) for assignment in assignments]
+
+
+# -------------------------
+# ADD ASSIGNMENT
+# -------------------------
+@app.post("/assignments")
+def add_assignment(assignment: Assignment):
+
+    connection = get_db_connection()
+
+    cursor = connection.execute(
+        """
+        INSERT INTO assignments(
+            subject_id,
+            title,
+            deadline,
+            status,
+            created_at
+        )
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            assignment.subject_id,
+            assignment.title,
+            assignment.deadline,
+            assignment.status,
+            assignment.created_at
+        )
+    )
+
+    connection.commit()
+
+    assignment_id = cursor.lastrowid
+
+    new_assignment = connection.execute(
+        "SELECT * FROM assignments WHERE id=?",
+        (assignment_id,)
+    ).fetchone()
+
+    connection.close()
+
+    return dict(new_assignment)
+
+
+# -------------------------
+# UPDATE ASSIGNMENT
+# -------------------------
+@app.put("/assignments/{assignment_id}")
+def update_assignment(
+    assignment_id: int,
+    assignment: Assignment
+):
+
+    connection = get_db_connection()
+
+    existing_assignment = connection.execute(
+        "SELECT * FROM assignments WHERE id=?",
+        (assignment_id,)
+    ).fetchone()
+
+    if existing_assignment is None:
+        connection.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Assignment not found"
+        )
+
+    connection.execute(
+        """
+        UPDATE assignments
+        SET title=?,
+            deadline=?,
+            status=?,
+            created_at=?
+        WHERE id=?
+        """,
+        (
+            assignment.title,
+            assignment.deadline,
+            assignment.status,
+            assignment.created_at,
+            assignment_id
+        )
+    )
+
+    connection.commit()
+
+    updated_assignment = connection.execute(
+        "SELECT * FROM assignments WHERE id=?",
+        (assignment_id,)
+    ).fetchone()
+
+    connection.close()
+
+    return dict(updated_assignment)
+
+
+# -------------------------
+# DELETE ASSIGNMENT
+# -------------------------
+@app.delete("/assignments/{assignment_id}")
+def delete_assignment(assignment_id: int):
+
+    connection = get_db_connection()
+
+    assignment = connection.execute(
+        "SELECT * FROM assignments WHERE id=?",
+        (assignment_id,)
+    ).fetchone()
+
+    if assignment is None:
+        connection.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Assignment not found"
+        )
+
+    connection.execute(
+        "DELETE FROM assignments WHERE id=?",
+        (assignment_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return {
+        "message": "Assignment deleted successfully"
     }

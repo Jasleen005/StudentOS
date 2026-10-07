@@ -86,5 +86,20 @@ def create_tables():
         )
     """)
 
+        # -----------------------------
+    # Assignments Table
+    # -----------------------------
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS assignments (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            deadline TEXT NOT NULL,
+            status TEXT NOT NULL,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(subject_id) REFERENCES subjects(id)
+        )
+    """)
+
     connection.commit()
     connection.close()
