@@ -70,5 +70,21 @@ def create_tables():
         )
     """)
 
+        # -----------------------------
+    # Resources Table
+    # -----------------------------
+    connection.execute("""
+        CREATE TABLE IF NOT EXISTS resources (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            subject_id INTEGER NOT NULL,
+            title TEXT NOT NULL,
+            type TEXT NOT NULL,
+            category TEXT NOT NULL,
+            link TEXT,
+            created_at TEXT NOT NULL,
+            FOREIGN KEY(subject_id) REFERENCES subjects(id)
+        )
+    """)
+
     connection.commit()
     connection.close()

@@ -47,6 +47,13 @@ class Note(BaseModel):
     title: str
     content: str
     created_at: str
+class Resource(BaseModel):
+    subject_id: int
+    title: str
+    type: str
+    category: str
+    link: str = ""
+    created_at: str
 
 @app.get("/")
 def home():
@@ -555,67 +562,6 @@ def get_weekly_hours():
     }
 
 
-# -------------------------
-# GET NOTES BY SUBJECT
-# -------------------------
-@app.get("/notes/{subject_id}")
-def get_notes(subject_id: int):
-
-    connection = get_db_connection()
-
-    notes = connection.execute(
-        """
-        SELECT *
-        FROM notes
-        WHERE subject_id = ?
-        ORDER BY id DESC
-        """,
-        (subject_id,)
-    ).fetchall()
-
-    connection.close()
-
-    return [dict(note) for note in notes]
-
-
-# -------------------------
-# ADD NOTE
-# -------------------------
-@app.post("/notes")
-def add_note(note: Note):
-
-    connection = get_db_connection()
-
-    cursor = connection.execute(
-        """
-        INSERT INTO notes(
-            subject_id,
-            title,
-            content,
-            created_at
-        )
-        VALUES (?, ?, ?, ?)
-        """,
-        (
-            note.subject_id,
-            note.title,
-            note.content,
-            note.created_at
-        )
-    )
-
-    connection.commit()
-
-    note_id = cursor.lastrowid
-
-    new_note = connection.execute(
-        "SELECT * FROM notes WHERE id=?",
-        (note_id,)
-    ).fetchone()
-
-    connection.close()
-
-    return dict(new_note)
 
 
 # -------------------------
@@ -674,4 +620,104 @@ def delete_note(note_id: int):
 
     return {
         "message": "Note deleted successfully"
+    }
+
+
+# -------------------------
+# GET RESOURCES FOR SUBJECT
+# -------------------------
+@app.get("/resources/{subject_id}")
+def get_resources(subject_id: int):
+
+    connection = get_db_connection()
+
+    resources = connection.execute(
+        """
+        SELECT *
+        FROM resources
+        WHERE subject_id = ?
+        ORDER BY id DESC
+        """,
+        (subject_id,)
+    ).fetchall()
+
+    connection.close()
+
+    return [dict(resource) for resource in resources]
+
+
+# -------------------------
+# ADD RESOURCE
+# -------------------------
+@app.post("/resources")
+def add_resource(resource: Resource):
+
+    connection = get_db_connection()
+
+    cursor = connection.execute(
+        """
+        INSERT INTO resources(
+            subject_id,
+            title,
+            type,
+            category,
+            link,
+            created_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            resource.subject_id,
+            resource.title,
+            resource.type,
+            resource.category,
+            resource.link,
+            resource.created_at
+        )
+    )
+
+    connection.commit()
+
+    resource_id = cursor.lastrowid
+
+    new_resource = connection.execute(
+        "SELECT * FROM resources WHERE id=?",
+        (resource_id,)
+    ).fetchone()
+
+    connection.close()
+
+    return dict(new_resource)
+
+
+# -------------------------
+# DELETE RESOURCE
+# -------------------------
+@app.delete("/resources/{resource_id}")
+def delete_resource(resource_id: int):
+
+    connection = get_db_connection()
+
+    resource = connection.execute(
+        "SELECT * FROM resources WHERE id=?", 
+        (resource_id,)
+    ).fetchone()
+
+    if resource is None:
+        connection.close()
+        raise HTTPException(
+            status_code=404,
+            detail="Resource not found"
+        )
+
+    connection.execute(
+        "DELETE FROM resources WHERE id=?",
+        (resource_id,)
+    )
+
+    connection.commit()
+    connection.close()
+
+    return {
+        "message": "Resource deleted successfully"
     }
