@@ -1,64 +1,193 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function StudyPlanner() {
 
-  const [sessions, setSessions] = useState([
-    {
-      id: 1,
-      subject: "Java",
-      topic: "OOP Concepts",
-      date: "2026-09-11",
-      time: "10:00",
-      duration: "2 hours"
-    },
-    {
-      id: 2,
-      subject: "DBMS",
-      topic: "SQL Queries",
-      date: "2026-09-12",
-      time: "14:00",
-      duration: "1 hour"
-    }
-  ]);
+  const [sessions, setSessions] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
-  const [subject, setSubject] = useState("");
+  const [subjectId, setSubjectId] = useState("");
   const [topic, setTopic] = useState("");
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
-  const [duration, setDuration] = useState("1 hour");
+  const [duration, setDuration] = useState("60");
 
-  const addSession = () => {
+  // -------------------------
+  // LOAD SUBJECTS
+  // -------------------------
+  const loadSubjects = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/subjects"
+      );
 
-    if (!subject.trim() || !topic.trim() || !date || !time) {
+      if (!response.ok) {
+        throw new Error("Failed to load subjects");
+      }
+
+      const data = await response.json();
+      setSubjects(data);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load subjects.");
+    }
+  };
+
+
+  // -------------------------
+  // LOAD STUDY SESSIONS
+  // -------------------------
+  const loadSessions = async () => {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8001/study-sessions"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to load study sessions");
+      }
+
+      const data = await response.json();
+      setSessions(data);
+
+    } catch (error) {
+      console.log(error);
+      alert("Failed to load study sessions.");
+    }
+  };
+
+
+  // -------------------------
+  // LOAD DATA ON PAGE OPEN
+  // -------------------------
+  useEffect(() => {
+    loadSubjects();
+    loadSessions();
+  }, []);
+
+
+  // -------------------------
+  // CALCULATE END TIME
+  // -------------------------
+  const calculateEndTime = (startTime, durationMinutes) => {
+
+    const [hours, minutes] = startTime
+      .split(":")
+      .map(Number);
+
+    const totalMinutes =
+      hours * 60 +
+      minutes +
+      Number(durationMinutes);
+
+    const endHours =
+      Math.floor(totalMinutes / 60) % 24;
+
+    const endMinutes =
+      totalMinutes % 60;
+
+    return `${String(endHours).padStart(2, "0")}:${String(
+      endMinutes
+    ).padStart(2, "0")}`;
+  };
+
+
+  // -------------------------
+  // ADD STUDY SESSION
+  // -------------------------
+  const addSession = async () => {
+
+    if (!subjectId || !topic.trim() || !date || !time) {
       alert("Please fill all study session details.");
       return;
     }
 
-    const newSession = {
-      id: Date.now(),
-      subject,
-      topic,
-      date,
+    const durationMinutes = Number(duration);
+
+    const endTime = calculateEndTime(
       time,
-      duration
+      durationMinutes
+    );
+
+    const newSession = {
+      subject_id: Number(subjectId),
+      session_date: date,
+      start_time: time,
+      end_time: endTime,
+      duration_minutes: durationMinutes,
+      notes: topic
     };
 
-    setSessions([...sessions, newSession]);
+    try {
 
-    setSubject("");
-    setTopic("");
-    setDate("");
-    setTime("");
-    setDuration("1 hour");
+      const response = await fetch(
+        "http://127.0.0.1:8001/study-sessions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(newSession)
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to add study session");
+      }
+
+      await loadSessions();
+
+      setSubjectId("");
+      setTopic("");
+      setDate("");
+      setTime("");
+      setDuration("60");
+
+    } catch (error) {
+
+      console.log(error);
+      alert("Failed to add study session.");
+
+    }
   };
 
-  const deleteSession = (sessionId) => {
-    setSessions(
-      sessions.filter(
-        (session) => session.id !== sessionId
-      )
+
+  // -------------------------
+  // DELETE STUDY SESSION
+  // -------------------------
+  const deleteSession = async (sessionId) => {
+
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this study session?"
     );
+
+    if (!confirmDelete) {
+      return;
+    }
+
+    try {
+
+      const response = await fetch(
+        `http://127.0.0.1:8001/study-sessions/${sessionId}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete study session");
+      }
+
+      await loadSessions();
+
+    } catch (error) {
+
+      console.log(error);
+      alert("Failed to delete study session.");
+
+    }
   };
+
 
   return (
     <main className="main-content">
@@ -86,23 +215,48 @@ function StudyPlanner() {
 
         <h2>➕ Plan a Study Session</h2>
 
-        <input
-          type="text"
-          placeholder="Subject"
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
+
+        {/* Subject */}
+
+        <select
+          value={subjectId}
+          onChange={(e) =>
+            setSubjectId(e.target.value)
+          }
           style={{
             width: "100%",
             padding: "10px",
             marginBottom: "10px"
           }}
-        />
+        >
+
+          <option value="">
+            Select Subject
+          </option>
+
+          {subjects.map((subject) => (
+
+            <option
+              key={subject.id}
+              value={subject.id}
+            >
+              {subject.name}
+            </option>
+
+          ))}
+
+        </select>
+
+
+        {/* Topic */}
 
         <input
           type="text"
           placeholder="Topic to study"
           value={topic}
-          onChange={(e) => setTopic(e.target.value)}
+          onChange={(e) =>
+            setTopic(e.target.value)
+          }
           style={{
             width: "100%",
             padding: "10px",
@@ -110,39 +264,68 @@ function StudyPlanner() {
           }}
         />
 
+
+        {/* Date */}
+
         <input
           type="date"
           value={date}
-          onChange={(e) => setDate(e.target.value)}
+          onChange={(e) =>
+            setDate(e.target.value)
+          }
           style={{
             padding: "10px",
             marginRight: "10px"
           }}
         />
+
+
+        {/* Time */}
 
         <input
           type="time"
           value={time}
-          onChange={(e) => setTime(e.target.value)}
+          onChange={(e) =>
+            setTime(e.target.value)
+          }
           style={{
             padding: "10px",
             marginRight: "10px"
           }}
         />
 
+
+        {/* Duration */}
+
         <select
           value={duration}
-          onChange={(e) => setDuration(e.target.value)}
+          onChange={(e) =>
+            setDuration(e.target.value)
+          }
           style={{
             padding: "10px",
             marginRight: "10px"
           }}
         >
-          <option value="30 minutes">30 minutes</option>
-          <option value="1 hour">1 hour</option>
-          <option value="2 hours">2 hours</option>
-          <option value="3 hours">3 hours</option>
+
+          <option value="30">
+            30 minutes
+          </option>
+
+          <option value="60">
+            1 hour
+          </option>
+
+          <option value="120">
+            2 hours
+          </option>
+
+          <option value="180">
+            3 hours
+          </option>
+
         </select>
+
 
         <button onClick={addSession}>
           Add Session
@@ -156,6 +339,7 @@ function StudyPlanner() {
       <div style={{ marginTop: "30px" }}>
 
         <h2>📚 Planned Sessions</h2>
+
 
         {sessions.length === 0 ? (
 
@@ -176,20 +360,26 @@ function StudyPlanner() {
             >
 
               <h3>
-                {session.subject} — {session.topic}
+                {session.subject_name} —{" "}
+                {session.notes}
               </h3>
 
-              <p>
-                📅 {session.date}
-              </p>
 
               <p>
-                🕒 {session.time}
+                📅 {session.session_date}
               </p>
 
+
               <p>
-                ⏱️ {session.duration}
+                🕒 {session.start_time} -{" "}
+                {session.end_time}
               </p>
+
+
+              <p>
+                ⏱️ {session.duration_minutes} minutes
+              </p>
+
 
               <button
                 onClick={() =>
